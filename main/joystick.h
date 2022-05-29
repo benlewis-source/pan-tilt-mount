@@ -9,11 +9,11 @@ class Joystick {
         int _xPin;
         int _yPin;
 
-        int _x_curve[4][2] = {{0, -100}, {502, 0}, {512, 0}, {1023, 100}};
-        int _y_curve[4][2] = {{0, -100}, {502, 0}, {512, 0}, {1023, 100}};
+        int _xHome = 512;
+        int _yHome = 512;
 
         int _getAverageReading(int pin);
-        float _interpolate(float value, int (*curve)[2]);
+        float _cubic(float x, float centre);
 
     public:
         Joystick(int xPin, int yPin);

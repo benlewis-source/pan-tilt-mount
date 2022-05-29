@@ -11,13 +11,8 @@ Joystick::Joystick(int xPin, int yPin)
 */
 void Joystick::begin(void)
 {
-    int _xHome = this->_getAverageReading(_xPin);
-    _x_curve[1][0] = _xHome - 10;
-    _x_curve[2][0] = _xHome + 10;
-
-    int _yHome = this->_getAverageReading(_yPin);
-    _y_curve[1][0] = _yHome - 10;
-    _y_curve[2][0] = _yHome + 10;
+    _xHome = this->_getAverageReading(_xPin);
+    _yHome = this->_getAverageReading(_yPin);
 }
 
 /* Returns the interpolated value for X
@@ -25,7 +20,7 @@ void Joystick::begin(void)
 float Joystick::getX(void)
 {
     int raw_x = analogRead(this->_xPin);
-    return _interpolate(raw_x, _x_curve);
+    return _cubic(raw_x, _xHome);
 }
 
 /* Returns the interpolated value for Y
@@ -33,7 +28,7 @@ float Joystick::getX(void)
 float Joystick::getY(void)
 {
     int raw_value = analogRead(this->_yPin);
-    return _interpolate(raw_value, _y_curve);
+    return _cubic(raw_value, _yHome);
 }
 
 /* This function takes a number of readings
@@ -50,26 +45,9 @@ int Joystick::_getAverageReading(int pin)
     return sum_total / num_samples;
 }
 
-/* This function takes an input value and performs 
-* a linear interpolation with the provided curve points. 
-*/
-float Joystick::_interpolate(float value, int (*curve)[2])
+
+float Joystick::_cubic(float x, float centre)
 {
-    float x0, y0, x1, y1;
-    for(int i = 1; i < 4; i++)
-    {
-
-        x0 = (float)curve[i - 1][0];
-        y0 = (float)curve[i - 1][1];
-        x1 = (float)curve[i][0];
-        y1 =(float) curve[i][1];
-        if(value <= x1)
-        {
-            break;
-        }
-    }
-
-    float slope = ((y1 - y0) / (x1 - x0));
-    float offest = y0 - (slope * x0);
-    return (slope * value) + offest;
+    float y = pow((x - centre), 3) / 20000;
+    return y;
 }
