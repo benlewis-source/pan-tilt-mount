@@ -10,7 +10,6 @@ StepperMotor panMotor(3, 11);
 
 void setup() {
   Serial.begin(115200);
-  InitTimersSafe(); 
   joystick.begin();
   tiltMotor.begin();
   panMotor.begin();
